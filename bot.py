@@ -1,11 +1,9 @@
-import asyncio
 import logging
-from aiogram import Bot, Dispatcher, types, F
-from aiogram.filters import Command
-from aiogram.fsm.context import FSMContext
-from aiogram.fsm.state import State, StatesGroup
-from aiogram.fsm.storage.memory import MemoryStorage
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton, ReplyKeyboardMarkup, KeyboardButton
+from aiogram import Bot, Dispatcher, types, executor
+from aiogram.contrib.fsm_storage.memory import MemoryStorage
+from aiogram.dispatcher import FSMContext
+from aiogram.dispatcher.filters.state import State, StatesGroup
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 # ===================== SOZLAMALAR =====================
 BOT_TOKEN = "8652308406:AAHrXis3KUwVUcrG3ZloGUWf8eJ7rFryZh0"
@@ -17,8 +15,9 @@ KARTA_RAQAMI = "9860 3501 4975 7329"
 # ======================================================
 
 logging.basicConfig(level=logging.INFO)
-bot = Bot(token=BOT_TOKEN)
-dp = Dispatcher(storage=MemoryStorage())
+bot = Bot(token=BOT_TOKEN, parse_mode=types.ParseMode.MARKDOWN)
+storage = MemoryStorage()
+dp = Dispatcher(bot, storage=storage)
 
 class TolovHolati(StatesGroup):
     chek_kutilmoqda = State()
@@ -51,15 +50,6 @@ Lekin *o'zingizga* qachon kuch berdingiz?
 💎 Ichki tinchlik va o'z-o'ziga ishonch tiklanadi
 
 ━━━━━━━━━━━━━━━━━━━━
-⚡️ *Bu kurs boshqalardan farqi:*
-
-Bu yerda nazariya yo'q.
-Faqat *amaliyot, his va o'zgarish.*
-
-Har kun — 1 topshiriq.
-Har topshiriq — yangi "men"ga bir qadam.
-
-━━━━━━━━━━━━━━━━━━━━
 🎁 *Narxi: 299 000 so'm*
 
 Bir oylik kafe xarajatingizdan kam narxda —
@@ -71,29 +61,25 @@ Bir oylik kafe xarajatingizdan kam narxda —
 """
 
 def sotib_olish_tugmasi():
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [InlineKeyboardButton(text="💳 Sotib olish — 299 000 so'm", callback_data="sotib_olish")]
-    ])
+    kb = InlineKeyboardMarkup()
+    kb.add(InlineKeyboardButton("💳 Sotib olish — 299 000 so'm", callback_data="sotib_olish"))
+    return kb
 
-def tasdiqlash_tugmalari(user_id: int):
-    return InlineKeyboardMarkup(inline_keyboard=[
-        [
-            InlineKeyboardButton(text="✅ Tasdiqlash", callback_data=f"tasdiqla_{user_id}"),
-            InlineKeyboardButton(text="❌ Rad etish", callback_data=f"rad_{user_id}")
-        ]
-    ])
-
-@dp.message(Command("start"))
-async def start(message: types.Message, state: FSMContext):
-    await state.clear()
-    await message.answer(
-        KURS_TAVSIF,
-        parse_mode="Markdown",
-        reply_markup=sotib_olish_tugmasi()
+def tasdiqlash_tugmalari(user_id):
+    kb = InlineKeyboardMarkup()
+    kb.row(
+        InlineKeyboardButton("✅ Tasdiqlash", callback_data=f"tasdiqla_{user_id}"),
+        InlineKeyboardButton("❌ Rad etish", callback_data=f"rad_{user_id}")
     )
+    return kb
 
-@dp.callback_query(F.data == "sotib_olish")
-async def sotib_olish(callback: types.CallbackQuery, state: FSMContext):
+@dp.message_handler(commands=["start"], state="*")
+async def start(message: types.Message, state: FSMContext):
+    await state.finish()
+    await message.answer(KURS_TAVSIF, reply_markup=sotib_olish_tugmasi())
+
+@dp.callback_query_handler(lambda c: c.data == "sotib_olish")
+async def sotib_olish(callback: types.CallbackQuery):
     await callback.message.answer(
         f"💳 *To'lov ma'lumotlari:*\n\n"
         f"💰 Summa: *{KURS_NARXI}*\n"
@@ -102,20 +88,18 @@ async def sotib_olish(callback: types.CallbackQuery, state: FSMContext):
         f"1. Yuqoridagi karta raqamiga *{KURS_NARXI}* o'tkazing\n"
         f"2. To'lov chekini (screenshot) shu yerga yuboring\n"
         f"3. Admin tasdiqlagach, kanal linki avtomatik yuboriladi ✅\n\n"
-        f"⏳ Tasdiqlash vaqti: 5-30 daqiqa",
-        parse_mode="Markdown"
+        f"⏳ Tasdiqlash vaqti: 5-30 daqiqa"
     )
-    await state.set_state(TolovHolati.chek_kutilmoqda)
+    await TolovHolati.chek_kutilmoqda.set()
     await callback.answer()
 
-@dp.message(TolovHolati.chek_kutilmoqda, F.photo)
+@dp.message_handler(content_types=types.ContentType.PHOTO, state=TolovHolati.chek_kutilmoqda)
 async def chek_qabul(message: types.Message, state: FSMContext):
     user = message.from_user
     ism = user.full_name
     username = f"@{user.username}" if user.username else "username yo'q"
     user_id = user.id
 
-    # Adminga xabar yuborish
     await bot.send_photo(
         chat_id=ADMIN_ID,
         photo=message.photo[-1].file_id,
@@ -127,27 +111,21 @@ async def chek_qabul(message: types.Message, state: FSMContext):
             f"Kurs: *{KURS_NOMI}*\n"
             f"Narx: *{KURS_NARXI}*"
         ),
-        parse_mode="Markdown",
         reply_markup=tasdiqlash_tugmalari(user_id)
     )
 
     await message.answer(
         "✅ *Chekingiz qabul qilindi!*\n\n"
         "⏳ Admin tez orada tekshirib, kanal linkini yuboradi.\n"
-        "Odatda 5-30 daqiqa ichida tasdiqlash bo'ladi. 🙏",
-        parse_mode="Markdown"
+        "Odatda 5-30 daqiqa ichida tasdiqlash bo'ladi. 🙏"
     )
-    await state.clear()
+    await state.finish()
 
-@dp.message(TolovHolati.chek_kutilmoqda)
+@dp.message_handler(state=TolovHolati.chek_kutilmoqda)
 async def chek_xato(message: types.Message):
-    await message.answer(
-        "📸 Iltimos, *to'lov chekining rasmini* yuboring (screenshot).",
-        parse_mode="Markdown"
-    )
+    await message.answer("📸 Iltimos, *to'lov chekining rasmini* yuboring (screenshot).")
 
-# Admin: tasdiqlash
-@dp.callback_query(F.data.startswith("tasdiqla_"))
+@dp.callback_query_handler(lambda c: c.data.startswith("tasdiqla_"))
 async def tasdiqla(callback: types.CallbackQuery):
     user_id = int(callback.data.split("_")[1])
     try:
@@ -159,19 +137,16 @@ async def tasdiqla(callback: types.CallbackQuery):
                 f"🔗 {KANAL_LINK}\n\n"
                 f"💎 *{KURS_NOMI}* kursiga xush kelibsiz!\n"
                 f"O'zgarishlar sizni kutmoqda. 🌸"
-            ),
-            parse_mode="Markdown"
+            )
         )
         await callback.message.edit_caption(
-            callback.message.caption + "\n\n✅ *TASDIQLANDI — link yuborildi*",
-            parse_mode="Markdown"
+            callback.message.caption + "\n\n✅ *TASDIQLANDI — link yuborildi*"
         )
     except Exception as e:
         await callback.message.answer(f"Xatolik: {e}")
     await callback.answer("✅ Tasdiqlandi!")
 
-# Admin: rad etish
-@dp.callback_query(F.data.startswith("rad_"))
+@dp.callback_query_handler(lambda c: c.data.startswith("rad_"))
 async def rad_et(callback: types.CallbackQuery):
     user_id = int(callback.data.split("_")[1])
     try:
@@ -182,20 +157,16 @@ async def rad_et(callback: types.CallbackQuery):
                 "Sabab: chek aniq ko'rinmagan yoki to'lov topilmagan.\n\n"
                 "📞 Muammo bo'lsa admin bilan bog'laning yoki qayta to'lov qiling.\n"
                 "/start — qaytadan boshlash"
-            ),
-            parse_mode="Markdown"
+            )
         )
         await callback.message.edit_caption(
-            callback.message.caption + "\n\n❌ *RAD ETILDI*",
-            parse_mode="Markdown"
+            callback.message.caption + "\n\n❌ *RAD ETILDI*"
         )
     except Exception as e:
         await callback.message.answer(f"Xatolik: {e}")
     await callback.answer("❌ Rad etildi!")
 
-async def main():
-    print("Bot ishga tushdi! ✅")
-    await dp.start_polling(bot)
-
 if __name__ == "__main__":
-    asyncio.run(main())
+    print("Bot ishga tushdi! ✅")
+    executor.start_polling(dp, skip_updates=True)
+    
