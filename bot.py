@@ -23,41 +23,70 @@ class TolovHolati(StatesGroup):
     chek_kutilmoqda = State()
 
 KURS_TAVSIF = """
-🌸 *14 KUNDA AYOLLIKNI TIKLASH*
+🥼 Assalomu alaykum azizam…
 
-_"Men charchadim... lekin nima uchun charchaganim ham esimda yo'q"_
+🔺Ba’zi ayollar tug‘ruqdan keyin faqat tanasini emas…
+o‘zini ham yo‘qotgandek his qiladi 💔
 
-Bu so'zlar tanish emasmi? 💭
+💔Erining ko‘zidagi avvalgi havas kamaygandek…
+O‘ziga bo‘lgan ishonch pasaygandek…
+Ichida nimadir o‘zgargandek tuyuladi…
 
-Har kuni hammaga kuch berasiz — farzandlarga, erga, ishga, do'stlarga...
-Lekin *o'zingizga* qachon kuch berdingiz?
+💔Ba’zi ayollar erining yonida bo‘lsa ham… o‘zini ayoldek his qilmay qo‘yadi.
 
-━━━━━━━━━━━━━━━━━━━━
-*Siz bu kursga kerak bo'lgan ayolsiz, agar:*
+🩸Ko‘pchilik ayollar bu muammoni hatto yaqin dugonasiga ham ayta olmaydi...
 
-✦ Ertalab ko'zingizni ochib, yorqinlik his qilmayotgan bo'lsangiz
-✦ "Ayol" ekanligingizni emas, faqat "ona", "xotin", "xodim" ekanligingizni his qilsangiz
-✦ O'zingizni sevish nima ekanini unutib qo'ygan bo'lsangiz
-✦ Hayotda biror narsa yetishmayapti — lekin nima ekanini bilmasangiz
+❌“Farzanddan keyin normal”
+❌ “Endi avvalgidek bo‘lmaydi”
+❌ “Vaqt o‘tib ketdi”
 
-━━━━━━━━━━━━━━━━━━━━
-🔑 *14 kun ichida nima o'zgaradi?*
+deb o‘ylab yuraveradi…
 
-💎 Ayollik energiyangiz uyg'onadi
-💎 O'zingizga qaytasiz — haqiqiy, kuchli, go'zal
-💎 Munosabatlardagi sovuqlik o'rniga iliqlik paydo bo'ladi
-💎 Hayotga yangi ko'z bilan qaray boshlaysiz
-💎 Ichki tinchlik va o'z-o'ziga ishonch tiklanadi
+🏃‍♀️Aslida esa ayol tanasi tiklana oladi ❤️
 
-━━━━━━━━━━━━━━━━━━━━
-🎁 *Narxi: 299 000 so'm*
+Tasavvur qiling… 🌹
 
-Bir oylik kafe xarajatingizdan kam narxda —
-*butun hayotingizni o'zgartiruvchi investitsiya.*
+💋yana o‘zingizni jozibali his qilish”
+💋ichingizdagi ayollikni uyg‘otish”
+💋tanangiz bilan qayta aloqa qilish
+♥️Eringiz sizga avvalgidek mexribon boʻlsa
 
-⏰ Joylar cheklangan. Ko'pchilik allaqachon boshladi.
+Ko‘pchilik ayollar ilk o‘zgarishni bir necha kun ichidayoq sezishni boshlaydi 📣
 
-*Siz ham tayyormisiz?* 👇
+💋Shu sabab “Ayollikni tiklash” kursini yaratganmiz.
+
+Bu kursda siz:
+❤️intim mushaklarni TO‘G‘RI his qilishni
+❤️ ayollarning eng ko‘p qiladigan xatolarini
+❤️ uy sharoitidagi samarali mashqlarni
+❤️ ayollik hissini kuchaytirish usullarini
+
+bosqichma-bosqich o‘rganasiz ✅
+
+❤️Darslar juda tushunarli formatda:
+🎥 video
+🎧 audio
+❤️ konspekt
+🏃‍♀️ amaliy mashqlar
+
+ko‘rinishida tayyorlangan.
+
+📱 Kurs ONLINE formatda bo‘ladi.
+Istalgan joyda va qulay vaqtda shug‘ullanishingiz mumkin 🌷
+
+💬 Eng muhimi —
+siz bu yo‘lda yolg‘iz qolmaysiz.
+Kurs davomida qo‘llab-quvvatlash va savol-javob bo‘ladi ❤️
+
+🎁 BONUS:
+Er-xotin yaqinligini yaxshilash bo‘yicha maxsus bonus darslar ham beriladi 🔥
+
+⏳ Hozir kursga qabul cheklangan joy bilan ochilgan.
+
+💵 Asl narx: 600.000 so‘m ❌
+24 soat ichida toʻlov qilsangiz 50% chegirma bn  229,000 soʻm bu imkoniyat 1 marta beriladi .
+
+📌Joylar soni sanoqli qoldi.
 """
 
 def sotib_olish_tugmasi():
