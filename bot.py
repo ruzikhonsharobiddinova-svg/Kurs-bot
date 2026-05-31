@@ -84,7 +84,8 @@ Er-xotin yaqinligini yaxshilash bo‘yicha maxsus bonus darslar ham beriladi �
 ⏳ Hozir kursga qabul cheklangan joy bilan ochilgan.
 
 💵 Asl narx: 600.000 so‘m ❌
-24 soat ichida toʻlov qilsangiz 50% chegirma bn  229,000 soʻm bu imkoniyat 1 marta beriladi .
+Bugun 23:59 gacha 50% lik skidkada 299,000 soʻm .
+Ertadan 600,000 soʻm
 
 📌Joylar soni sanoqli qoldi.
 """
